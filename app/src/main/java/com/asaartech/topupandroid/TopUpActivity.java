@@ -16,10 +16,21 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +39,7 @@ public class TopUpActivity extends AppCompatActivity {
 
     String carrier;
     ImageView imageView;
+    ImageButton btn_reset;
 
 
     @Override
@@ -42,7 +54,24 @@ public class TopUpActivity extends AppCompatActivity {
         setTitle(carrier);
 
         imageView = (ImageView) findViewById(R.id.imageView);
-
+//        btn_reset = (ImageButton) findViewById(R.id.btn_reset);
+//        btn_reset.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Mat matOriginal = new Mat();
+//                Mat matGray = new Mat();
+//
+//                Utils.bitmapToMat(resizedBitmap,matOriginal);
+//
+//                Imgproc.cvtColor(matOriginal, matGray, Imgproc.COLOR_RGB2GRAY);
+//
+//                Utils.matToBitmap(matGray,resizedBitmap);
+//
+//                BitmapDrawable bitmapDrawable = new BitmapDrawable(resizedBitmap);
+//
+//                imageView.setImageDrawable(bitmapDrawable);
+//            }
+//        });
 
         checkReadStoragePermission();
 
@@ -65,9 +94,26 @@ public class TopUpActivity extends AppCompatActivity {
                 matrix.postRotate(90);
             }
 
+            Mat matOriginal = new Mat();
+            Mat matProcessing = new Mat();
+
+            Utils.bitmapToMat(myBitmap,matOriginal);
+
+            Imgproc.cvtColor(matOriginal, matProcessing, Imgproc.COLOR_RGB2GRAY);
+//            Imgproc.equalizeHist(matProcessing,matOriginal);
+            Imgproc.GaussianBlur(matProcessing, matOriginal, new Size(3,3), 2);
+
+
+//            Imgproc.adaptiveThreshold(matProcessing, matOriginal, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
+            Imgproc.threshold(matOriginal, matProcessing, 120, 255, Imgproc.THRESH_BINARY_INV);
+//            Imgproc.medianBlur(matOriginal, matProcessing, 3);
+
+            Utils.matToBitmap(matProcessing,myBitmap);
 
             Bitmap resizedBitmap = Bitmap.createBitmap(myBitmap, 0, 0,
                     width, height, matrix, true);
+
+
 
             // make a Drawable from Bitmap to allow to set the BitMap
             // to the ImageView, ImageButton or what ever
