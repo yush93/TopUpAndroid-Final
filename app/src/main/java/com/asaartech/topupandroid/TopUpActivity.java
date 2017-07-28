@@ -102,11 +102,9 @@ public class TopUpActivity extends AppCompatActivity {
             Imgproc.cvtColor(matOriginal, matProcessing, Imgproc.COLOR_RGB2GRAY);
 //            Imgproc.equalizeHist(matProcessing,matOriginal);
             Imgproc.GaussianBlur(matProcessing, matOriginal, new Size(3,3), 2);
-
-
-//            Imgproc.adaptiveThreshold(matProcessing, matOriginal, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
-            Imgproc.threshold(matOriginal, matProcessing, 120, 255, Imgproc.THRESH_BINARY_INV);
-//            Imgproc.medianBlur(matOriginal, matProcessing, 3);
+            Imgproc.threshold(matOriginal, matProcessing, 150, 255, Imgproc.THRESH_BINARY_INV);
+//            Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new  Size(3, 3));
+//            Imgproc.erode(matProcessing, matOriginal,element);
 
             Utils.matToBitmap(matProcessing,myBitmap);
 
